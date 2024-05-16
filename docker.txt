@@ -1,0 +1,20 @@
+1. To build image from local file
+
+docker image build -t my-node-img .
+
+2. To list docker images:
+docker image list
+
+3. To execute new container 
+docker container run my-node-img
+
+4. To List all docker containers which are running and stopped.
+
+docker container ls -a
+
+5. To start a new container
+docker container start
+
+6. To access the terminal for docker shell
+docker exec -it container_id sh
+
