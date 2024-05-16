@@ -6,4 +6,13 @@ const getOtherMembers = (members, userId) => {
   }
 }
 
-export { getOtherMembers }
+
+const deleteFilesFromCloudinary = async (publicIds) => {
+  try {
+
+  } catch (error) {
+    console.log(`Error while deleting files from cloudinary : ${error}`);
+  }
+}
+
+export { getOtherMembers, deleteFilesFromCloudinary }

@@ -1,0 +1,405 @@
+{
+	"info": {
+		"_postman_id": "6f24ec1e-a59e-48cb-93c5-85b623c671b7",
+		"name": "Chat App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10424324"
+	},
+	"item": [
+		{
+			"name": "USER",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"amitgt9967\",\n    \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/users/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/myprofile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"myprofile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/logout",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Amit Gupta",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "amit@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "9967639740",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/Users/amitg/Downloads/0Ouu79XKYQkmR6oG9p8AcIfoJO55wPyfmg.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/users/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/search?name=amit",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "amit"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users/all",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users",
+								"all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "chat",
+			"item": [
+				{
+					"name": "New Group Chat",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Tiger Group\",\n    \"members\": [\n        \"65f94dcfd681d3d0187fdc27\", \"662dcf9db16a11811c86f43a\", \"662ddc7667f9d9a806f79c11\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/chat/new",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"chat",
+								"new"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Chats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/chat/mychat",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"chat",
+								"mychat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Groups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/chat/mychat/groups",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"chat",
+								"mychat",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add new Members",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"chatId\": \"66445fece3846b41b6e40f5e\",\n    \"members\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/chat/mychat/addmembers",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"chat",
+								"mychat",
+								"addmembers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Attachments",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "chatId",
+									"value": "66458e42a0a0144f861c6e88",
+									"type": "text"
+								},
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/amitg/Downloads/image (6) (1).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/chat/message",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"chat",
+								"message"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Chat By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/chat/66458e42a0a0144f861c6e88?populate=true",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"chat",
+								"66458e42a0a0144f861c6e88"
+							],
+							"query": [
+								{
+									"key": "populate",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Chat Name",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Tiger h1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/chat/664642f3d057a04a1005e85c",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"chat",
+								"664642f3d057a04a1005e85c"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Chat",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Tiger h1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/chat/664642c946db0e2805a2f2af",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"chat",
+								"664642c946db0e2805a2f2af"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:6000/v1",
+			"type": "string"
+		}
+	]
+}

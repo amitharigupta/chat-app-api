@@ -3,7 +3,7 @@ import userModel from '../models/user.model.js';
 import { messageModel } from '../models/message.model.js';
 import { emitEvent } from '../utils/emit-event-utils.js';
 import { ALERT, REFETCH_CHATS, NEW_ATTACHMENT, NEW_MESSAGE_ALERT } from '../constants/events.js';
-import { getOtherMembers } from '../utils/helper.js';
+import { getOtherMembers, deleteFilesFromCloudinary } from '../utils/helper.js';
 
 export const newGroupChat = async (req, res) => {
   try {
@@ -14,7 +14,7 @@ export const newGroupChat = async (req, res) => {
 
     const allMembers = [...members, req.user];
 
-    let groupChats = await chatModel.create({ name, groupChat: true, creater: req.user, members: allMembers });
+    let groupChats = await chatModel.create({ name, groupChat: true, creator: req.user, members: allMembers });
 
     emitEvent(req, ALERT, allMembers, `Welcome to ${name} group chat`);
     emitEvent(req, REFETCH_CHATS, members);
@@ -264,5 +264,117 @@ export const sendAttachments = async (req, res) => {
   } catch (error) {
     console.log(`Error while sending attachments : ${error}`);
     return res.status(500).json({ status: false, message: `Error while sending attachments : ${error}` });
+  }
+}
+
+export const getChatDetails = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    let chat;
+
+    if (req.query.populate === "true") {
+      chat = await chatModel.findById(id).populate("members", "name avatar").lean();
+
+      if (!chat) {
+        return res.status(404).json({ status: false, message: "Chat Not Found" });
+      }
+
+      chat.members = chat.members.map(({ _id, name, avatar }) => {
+        return { _id, name, avatar };
+      });
+    } else {
+      chat = await chatModel.findById(id);
+
+      if (!chat) {
+        return res.status(404).json({ status: false, message: "Chat Not Found" });
+      }
+    }
+
+    return res.status(200).json({
+      status: 200, message: `Chat fetched successfully`,
+      data: chat
+    });
+  } catch (error) {
+    console.log(`Error while getting chat details: ${error}`);
+    return res.status(500).json({ status: false, message: `Error while getting chat details: ${error} ` });
+  }
+}
+
+export const renameGroup = async (req, res) => {
+  try {
+
+    const chatId = req.params.id;
+    const { name } = req.body;
+
+    const chat = await chatModel.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({ status: false, message: "Chat Not Found" });
+    }
+
+    if (!chat.groupChat) {
+      return res.status(400).json({ status: false, message: "This is not a group chat" });
+    }
+    console.log('chat Id', chat);
+    console.log(chat.creator, req.user);
+
+    // if (chat.creator.toString() !== req.user.toString()) return res.status(403).json({ status: false, message: 'You are not allowed to members' });
+
+    chat.name = name;
+
+    await chat.save();
+
+    emitEvent(req, REFETCH_CHATS, chat.members);
+
+    return res.status(200).json({
+      status: 200, message: `Group renamed successfully`,
+      data: chat
+    });
+
+  } catch (error) {
+    console.log(`Error while renaming group : ${error}`);
+    return res.status(500).json({ status: false, message: `Error while renaming group : ${error} ` });
+  }
+}
+
+
+export const deleteChat = async (req, res) => {
+  try {
+    const chatId = req.params.id;
+
+    const chat = await chatModel.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({ status: false, message: "Chat Not Found" });
+    }
+
+    if (chat.groupChat && chat.creator.toString() !== req.user.toString()) {
+      return res.status(403).json({ status: false, message: "Your are not allowed to delete the chat group" });
+    }
+
+    if (!chat.groupChat && !chat.members.includes(req.user.toString())) {
+      return res.status(403).json({ status: false, message: "You are not allowed to delete the chat group" });
+    }
+
+    const messageWithAttachments = await messageModel.find({ chat: chatId, attachments: { $exists: true, $ne: [] } });
+
+    const publicIds = [];
+
+    messageWithAttachments.forEach(({ attachments }) => {
+      attachments.forEach(({ public_id }) => {
+        publicIds.push(public_id);
+      });
+    });
+
+    await Promise.all([deleteFilesFromCloudinary(publicIds), chat.deleteOne(), messageModel.deleteMany({ chat: chatId })]);
+
+    emitEvent(req, REFRESH_CHAT, members);
+
+    return res.status(200).json({ status: true, message: "Chat Deleted Successfully" });
+  } catch (error) {
+    console.log(`Error while deleting group : ${error}`);
+    return res.status(500).json({ status: false, message: `Error while deleting group : ${error} ` });
   }
 }
