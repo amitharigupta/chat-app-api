@@ -1,6 +1,8 @@
 import { chatModel } from '../models/chat.model.js';
+import userModel from '../models/user.model.js';
+import { messageModel } from '../models/message.model.js';
 import { emitEvent } from '../utils/emit-event-utils.js';
-import { ALERT, REFETCH_CHATS } from '../constants/events.js';
+import { ALERT, REFETCH_CHATS, NEW_ATTACHMENT, NEW_MESSAGE_ALERT } from '../constants/events.js';
 import { getOtherMembers } from '../utils/helper.js';
 
 export const newGroupChat = async (req, res) => {
@@ -143,7 +145,7 @@ export const removeMember = async (req, res) => {
 
     const [chat, userThatWillBeRemoved] = await Promise.all([
       chatModel.findById(chatId),
-      UserModel.findById(userId)
+      userModel.findById(userId)
     ]);
 
     if (!chat) {
@@ -216,5 +218,51 @@ export const leaveGroup = async (req, res) => {
 
   } catch (error) {
     console.log(`Error while removing members: ${error}`);
+  }
+}
+
+
+export const sendAttachments = async (req, res) => {
+  try {
+    const { chatId } = req.body;
+
+    let p1 = chatModel.findById(chatId);
+    let p2 = userModel.findById(req.user, "name");
+    const [chat, me] = await Promise.all([p1, p2]);
+
+    if (!chat) return res.status(404).json({ status: false, message: "Chat Not Found" });
+
+    const files = req.files || [];
+
+    if (files.length < 1) return res.status(400).json({ status: false, message: "Please Provide Attachments" });
+
+    // Upload file here
+
+    const attachments = [];
+
+    const messageForDB = { content: "", attachments, sender: me._id, chat: chatId };
+
+    const messageForRealTime = {
+      ...messageForDB,
+      sender: {
+        _id: me._id,
+        name: me.name,
+      }
+    };
+
+
+    const message = await messageModel.create(messageForDB);
+
+    emitEvent(req, NEW_ATTACHMENT, chat.members, {
+      message: messageForRealTime,
+      chatId,
+    });
+
+    emitEvent(req, NEW_MESSAGE_ALERT, chat.members, { chatId });
+
+    return res.status(200).json({ status: true, message: "Attachments sent successfully", data: message });
+  } catch (error) {
+    console.log(`Error while sending attachments : ${error}`);
+    return res.status(500).json({ status: false, message: `Error while sending attachments : ${error}` });
   }
 }
