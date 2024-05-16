@@ -112,3 +112,15 @@ export const searchController = async (req, res) => {
     console.log(`Error while searching : ${error}`);
   }
 }
+
+
+export const allUserController = async (req, res) => {
+  try {
+    const users = await userModel.find({});
+
+    return res.status(200).json({ status: true, message: "Data fetched successfully", data: users });
+
+  } catch (error) {
+    console.log(`Error while searching all users ${error}`);
+  }
+}

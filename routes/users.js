@@ -1,6 +1,6 @@
 import express from 'express';
 var router = express.Router();
-import { loginController, registerController, myProfileController, myLogoutController, searchController } from '../controllers/UserController.js';
+import { loginController, registerController, myProfileController, myLogoutController, searchController, allUserController } from '../controllers/UserController.js';
 import { singleFileUpload } from '../middlewares/multer.js';
 import isAuthenticated from '../middlewares/auth.js';
 
@@ -17,5 +17,7 @@ router.post('/register', singleFileUpload, registerController);
 router.get('/myprofile', isAuthenticated, myProfileController);
 router.get('/logout', isAuthenticated, myLogoutController);
 router.get('/search', isAuthenticated, searchController);
+router.get('/all', isAuthenticated, allUserController);
+
 
 export default router;

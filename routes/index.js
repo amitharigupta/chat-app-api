@@ -1,5 +1,6 @@
 import express from 'express';
 import userApiRoute from './users.js';
+import chatApiRoute from './chat.js';
 
 const router = express.Router();
 
@@ -10,5 +11,6 @@ router.get('/', function (req, res, next) {
 });
 
 router.use('/users', userApiRoute);
+router.use('/chat', chatApiRoute);
 
 export default router;
