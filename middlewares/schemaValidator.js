@@ -17,7 +17,7 @@ const validateSchema = (schema) => {
         next()
       }
       catch (err) {
-        logging.info('Incorrect req - ' + err.details[0].message.replace(/\"/g, ""))
+        // logging.info('Incorrect req - ' + err.details[0].message.replace(/\"/g, ""))
         return res.status(410).json({
           "status": false,
           "message": err.details[0].message.replace(/\"/g, ""),
@@ -26,7 +26,7 @@ const validateSchema = (schema) => {
       }
     }
     else {
-      logging.info('Invalid Schema')
+      // logging.info('Invalid Schema')
       return res.status(410).json({
         "status": false,
         "message": 'Invalid Schema',

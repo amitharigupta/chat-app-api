@@ -54,7 +54,11 @@ export const registerController = async (req, res) => {
 
     const userPayload = { name: req.body.name, avatar: avatar, email: req.body.email, password: hashPassword, phone: req.body.phone }
 
-    console.log('req.body : ', userPayload);
+    const userExist = await userModel.findOne({ email: userPayload.email });
+
+    if (userExist) {
+      return res.status(400).json({ status: false, message: "User Already Exist" });
+    }
 
     const user = await userModel.create(userPayload);
 

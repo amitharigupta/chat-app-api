@@ -320,7 +320,7 @@ export const renameGroup = async (req, res) => {
     console.log('chat Id', chat);
     console.log(chat.creator, req.user);
 
-    // if (chat.creator.toString() !== req.user.toString()) return res.status(403).json({ status: false, message: 'You are not allowed to members' });
+    if (chat.creator.toString() !== req.user.toString()) return res.status(403).json({ status: false, message: 'You are not allowed to members' });
 
     chat.name = name;
 
@@ -376,5 +376,37 @@ export const deleteChat = async (req, res) => {
   } catch (error) {
     console.log(`Error while deleting group : ${error}`);
     return res.status(500).json({ status: false, message: `Error while deleting group : ${error} ` });
+  }
+}
+
+export const getMessages = async (req, res) => {
+  try {
+    const chatId = req.params.id;
+
+    const { page = 1 } = req.query;
+
+    const limit = process.env.MESSAGE_LIMIT || 10;
+    const skip = (page - 1) * limit;
+
+    let p1 = messageModel.find({ chat: chatId }).sort({ createdAt: -1 }).skip(skip).limit(limit).populate("sender", "name avatar").lean();
+
+    let p2 = messageModel.countDocuments({
+      chat: chatId,
+    });
+
+    const [messages, totalMessagesCount] = await Promise.all([p1, p2])
+    if (!messages) {
+      return res.status(404).json({ status: false, message: "Messages Not Found" });
+    }
+    const totalPages = Math.ceil(totalMessagesCount / limit);
+
+    return res.status(200).json({
+      status: 200, message: `Messages fetched successfully`,
+      totalPages,
+      data: messages.reverse()
+    });
+  } catch (error) {
+    console.log(`Error while getting messages : ${error}`);
+    return res.status(500).json({ status: false, message: `Error while getting messages : ${error} ` });
   }
 }

@@ -1,7 +1,7 @@
 import express from 'express';
 var router = express.Router();
 import isAuthenticated from '../middlewares/auth.js';
-import { newGroupChat, getMyChats, getMyGroups, addMembers, removeMember, leaveGroup, sendAttachments, getChatDetails, renameGroup, deleteChat } from '../controllers/ChatController.js';
+import { newGroupChat, getMyChats, getMyGroups, addMembers, removeMember, leaveGroup, sendAttachments, getChatDetails, renameGroup, deleteChat, getMessages } from '../controllers/ChatController.js';
 import { attachmentsMulter } from '../middlewares/multer.js';
 
 /* GET users listing. */
@@ -29,5 +29,7 @@ router.post('/message', attachmentsMulter, sendAttachments);
 router.get('/:id', getChatDetails);
 router.put('/:id', renameGroup);
 router.delete('/:id', deleteChat);
+
+router.get('/message/:id', getMessages);
 
 export default router;
