@@ -26,6 +26,15 @@ const loginSchema = Joi.object().keys({
     .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
 });
 
+const friendReuestSchema = Joi.object().keys({
+  userId: Joi.string().required(),
+});
+
+const acceptfriendReuestSchema = Joi.object().keys({
+  requestId: Joi.string().required(),
+  isAccept: Joi.boolean().required().label('Please add accept friend'),
+});
+
 const newGroupChatValidator = Joi.object().keys({
   name: Joi.string().required(),
   members: Joi.array().items(Joi.string()).min(2).max(10).required(),
@@ -50,9 +59,8 @@ const sendAttachmentValidator = Joi.object().keys({
   files: Joi.array().min(1).max(5).required()
 });
 
-
 const getMessageValidator = Joi.object().keys({
   id: Joi.string().required(),
 });
 
-export { registrationSchema, loginSchema, newGroupChatValidator, addMemberValidator, removeMemberValidator, leaveGroupValidator, sendAttachmentValidator, getMessageValidator }
+export { registrationSchema, loginSchema, newGroupChatValidator, addMemberValidator, removeMemberValidator, leaveGroupValidator, sendAttachmentValidator, getMessageValidator, friendReuestSchema, acceptfriendReuestSchema }
