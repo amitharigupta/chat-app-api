@@ -24,7 +24,35 @@ const loginSchema = Joi.object().keys({
 
   password: Joi.string()
     .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-})
+});
+
+const newGroupChatValidator = Joi.object().keys({
+  name: Joi.string().required(),
+  members: Joi.array().items(Joi.string()).min(2).max(10).required(),
+});
+
+const addMemberValidator = Joi.object().keys({
+  chatId: Joi.string().required(),
+  members: Joi.array().items(Joi.string()).min(1).max(10).required(),
+});
+
+const removeMemberValidator = Joi.object().keys({
+  chatId: Joi.string().required(),
+  userId: Joi.string().required(),
+});
+
+const leaveGroupValidator = Joi.object().keys({
+  id: Joi.string().required(),
+});
+
+const sendAttachmentValidator = Joi.object().keys({
+  chatId: Joi.string().required(),
+  files: Joi.array().min(1).max(5).required()
+});
 
 
-export { registrationSchema, loginSchema }
+const getMessageValidator = Joi.object().keys({
+  id: Joi.string().required(),
+});
+
+export { registrationSchema, loginSchema, newGroupChatValidator, addMemberValidator, removeMemberValidator, leaveGroupValidator, sendAttachmentValidator, getMessageValidator }

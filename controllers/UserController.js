@@ -1,4 +1,5 @@
 import userModel from '../models/user.model.js';
+import { chatModel } from '../models/chat.model.js';
 import PasswordUtils from '../utils/password-utils.js';
 import JWTUtils from '../utils/jwt-utils.js';
 import responseUtils from '../utils/response-utils.js';
@@ -108,10 +109,25 @@ export const myLogoutController = async (req, res) => {
 export const searchController = async (req, res) => {
   try {
     const { name } = req.query;
-    const user = await userModel.findOne({ name });
-    if (!user) return res.status(404).json({ status: false, message: "User Not Found" });
 
-    return res.status(200).json({ status: true, message: "Data fetched successfully", data: "user" });
+    const myChats = await chatModel.find({ groupChat: false, members: req.user });
+
+    const allUsersFromMyChats = myChats.flatMap((chat) => chat.members);
+
+    const allUsersExceptMeAndFriends = await userModel.find({
+      _id: { $nin: allUsersFromMyChats },
+      name: { $regex: name, $options: "i" }
+    });
+
+    const users = allUsersExceptMeAndFriends.map(i => ({
+      ...i,
+      avatar: i.avatar.url
+    }))
+
+    // const user = await userModel.find({ groupChat: false });
+    // if (!user) return res.status(404).json({ status: false, message: "User Not Found" });
+
+    return res.status(200).json({ status: true, message: "Data fetched successfully", data: users });
   } catch (error) {
     console.log(`Error while searching : ${error}`);
   }
